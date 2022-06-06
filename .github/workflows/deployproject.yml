@@ -1,0 +1,73 @@
+---
+- name: Django Server Project Deployment Playbook # Deploys Django project files and apps to an instance
+  hosts: all
+  become: true
+  vars_files:
+    - variables.yml
+
+  tasks:
+
+  - name: Deploy local project files # Uploads local project files from the specified directory
+    copy:
+        src: "{{ DEPLOY_LOCAL }}/"
+        dest: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir"
+        owner: "{{ ADMIN_USER }}"
+        group: "www-data"
+        mode: 0644
+    when: DEPLOY_LOCAL # Only copy these files if DEPLOY_LOCAL is set
+
+  - name: Deploy project files from Git repo # Retrieve files from specified git repo
+    git: # Manages Git SVN repositories
+        repo: "{{ DEPLOY_REPO }}" # Repository URL
+        dest: "/home/{{ ADMIN_USER }}/projects/temp/"
+    when: DEPLOY_REPO # Only fetch this repo when DEPLOY_REPO is set
+
+  - name: Copy repo project files into project folder
+    copy:
+        src: "/home/{{ ADMIN_USER }}/projects/temp/"
+        remote_src: yes # Specifies that ansible should look for the source files on the remote system
+        dest: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir/"
+        owner: "{{ ADMIN_USER }}"
+        group: "www-data"
+        mode: 0644
+    when: DEPLOY_REPO
+
+  - name: Ensure project directory is traversable
+    file:
+        name: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir"
+        state: directory
+        owner: "{{ ADMIN_USER }}"
+        group: "www-data"
+        mode: 0755
+
+  - name: Remove temp directory # Cleanup
+    file:
+        name: "/home/{{ ADMIN_USER }}/projects/temp"
+        state: absent
+
+  - name: Make migrations for apps # Generates migration files to add to the database
+    remote_user: "{{ ADMIN_USER }}"
+    django_manage:
+        command: "makemigrations --pythonpath='apps'"
+        app_path: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir"
+        virtualenv: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir/{{ PROJECT_NAME }}_env"
+        pythonpath: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir/apps"
+
+  - name: Migrate the schema to the database # Represents the deployed project in Django's database
+    remote_user: "{{ ADMIN_USER }}"
+    django_manage:
+        command: migrate
+        app_path: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir"
+        virtualenv: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir/{{ PROJECT_NAME }}_env"
+
+  - name: Collect Django static files # Gathers the static files for the project
+    remote_user: "{{ ADMIN_USER }}"
+    django_manage:
+        command: collectstatic # Creates copies of all static files from apps in the static directory
+        app_path: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir"
+        virtualenv: "/home/{{ ADMIN_USER }}/projects/{{ PROJECT_NAME }}_dir/{{ PROJECT_NAME }}_env"
+
+  - name: Restart gunicorn service
+    service:
+        name: gunicorn
+        state: restarted
