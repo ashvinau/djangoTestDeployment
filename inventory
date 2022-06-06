@@ -1,1 +1,1 @@
-django_server ansible_host=44.231.113.88 ansible_user=ubuntu ansible_ssh_private_key_file="~/.ssh/id_django"
+django_server ansible_host=44.231.113.88 ansible_user=ubuntu ansible_ssh_private_key_file="./id_django"
