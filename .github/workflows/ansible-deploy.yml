@@ -10,7 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
 
@@ -29,8 +29,8 @@ jobs:
         SSH_KEY: ${{ secrets.SSH_KEY }}
       run: |
         mkdir .ssh
-        echo SSH_KEY > ~/.ssh/id_django
-        chmod 600 ~/.ssh/id_django
-    - name: run exporters playbook
+        echo SSH_KEY > /.ssh/id_django
+        chmod 600 /.ssh/id_django
+    - name: run deployment playbook
       run: |
         ansible-playbook -i inventory deployproject.yml
