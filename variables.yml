@@ -1,0 +1,8 @@
+DOMAIN_NAME: "44.231.113.88" # The domain name or IP address
+ADMIN_USER: "joe" # User for web dev and admin
+ADMIN_PASSWORD: "htOi1kGXvoWtblX1gfXyg7fx4Zeds1" # Password for the database and ftp login
+PROJECT_NAME: "djangotest" # Name of the project
+SUPERUSER_EMAIL: "Joe@wigdor.io" # Email for Django superuser
+DJANGO_SECRET_KEY: "django-insecure-msen+ri)8(k**&hqh65@*^cxva(7&^iudqu=l)xz^rir)43!t!" # Must be 50 characters
+DEPLOY_LOCAL: False # The relative path to local project files to deploy or False to disable
+DEPLOY_REPO: "https://github.com/ashvinau/djangoTestDeployment.git" # URL to Git repository containing project files to deploy or False to disable
