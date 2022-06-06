@@ -28,10 +28,10 @@ jobs:
         pip install ansible==2.13.0 requests
     - name: set ansible config secrets
       env:        
-        DJANGO_SSH_KEY: ${{ secrets.DJANGO_SSH_KEY }}
+        SSH_KEY: ${{ secrets.SSH_KEY }}
       run: |
         mkdir .ssh
-        echo "DJANGO_SSH_KEY" > .ssh/id_django
+        echo SSH_KEY > .ssh/id_django
         chmod 600 .ssh/id_django
     - name: run exporters playbook
       run: |
