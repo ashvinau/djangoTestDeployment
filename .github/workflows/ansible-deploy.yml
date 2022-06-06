@@ -30,6 +30,7 @@ jobs:
       run: |
         echo SSH_KEY > ./id_django
         chmod 600 ./id_django
+    - name: debug SSH key print
       run:
         cat ./id_django
     - name: run deployment playbook
