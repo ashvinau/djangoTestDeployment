@@ -28,9 +28,10 @@ jobs:
       env:        
         SSH_KEY: ${{ secrets.DJANGO_SSH_KEY }}
       run: |
-        mkdir .ssh
-        echo SSH_KEY > .ssh/id_django
-        chmod 600 .ssh/id_django
+        mkdir ~/.ssh
+        echo SSH_KEY > ~/.ssh/id_django
+        chmod 600 ~/.ssh/id_django
+        cat ~/.ssh/id_django
     - name: run deployment playbook
       run: |
         ansible-playbook -i inventory deployproject.yml
