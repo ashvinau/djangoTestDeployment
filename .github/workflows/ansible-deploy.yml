@@ -29,7 +29,9 @@ jobs:
       run: |
         mkdir ~/.ssh
         echo "${{ secrets.DJANGO_SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa    
+        chmod 600 ~/.ssh/id_rsa   
+        ssh-keyscan -H 44.231.113.88 > ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
  
     - name: run deployment playbook      
       run: ansible-playbook -i inventory deployproject.yml
