@@ -34,4 +34,4 @@ jobs:
         chmod 644 ~/.ssh/known_hosts
  
     - name: run deployment playbook      
-      run: ansible-playbook -i ${{ secrets.DJANGO_DOMAIN }}, -u ubuntu --key-file ~/.ssh/id_rsa deployproject.yml
+      run: ansible-playbook -i inventory deployproject.yml
