@@ -30,6 +30,8 @@ jobs:
       run: |
         echo "$SSH_KEY" > ./id_django
         chmod 600 ./id_django
+    - name: debug print ssh key
+        cat ./id_django
     - name: run deployment playbook
       run: |
         ansible-playbook -i inventory deployproject.yml
