@@ -31,6 +31,5 @@ jobs:
         echo "${{ secrets.DJANGO_SSH_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa    
  
-    - name: run deployment playbook
-      working-directory: ./ansible
+    - name: run deployment playbook      
       run: ansible-playbook -i inventory deployproject.yml --private-key "~/.ssh/id_rsa"  
